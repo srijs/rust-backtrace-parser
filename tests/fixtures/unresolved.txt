@@ -1,0 +1,2 @@
+stack backtrace:
+   0:                0x0 - <unresolved>

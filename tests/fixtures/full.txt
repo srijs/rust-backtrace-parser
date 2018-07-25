@@ -1,0 +1,31 @@
+stack backtrace:
+   0:     0x55e06f94cd35 - backtrace::backtrace::libunwind::trace::h042fc201d46ac6bb
+                        at /root/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.9/src/backtrace/libunwind.rs:53
+                         - backtrace::backtrace::trace::hd8156e10e3d1f9ca
+                        at /root/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.9/src/backtrace/mod.rs:42
+   1:     0x55e06f94d11e - backtrace::capture::Backtrace::new_unresolved::h249e85c726b2e52b
+                        at /root/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.9/src/capture.rs:88
+   2:     0x55e06f94d05d - backtrace::capture::Backtrace::new::h749e0d0f5f0b7d8a
+                        at /root/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.9/src/capture.rs:63
+   3:     0x55e06f9412f0 - playground::main::ha2eedfe6abd81b0e
+                        at src/main.rs:6
+   4:     0x55e06f9410cf - std::rt::lang_start::{{closure}}::ha4e5bb3ecf6c512a
+                        at /checkout/src/libstd/rt.rs:74
+   5:     0x55e06f969e62 - std::rt::lang_start_internal::{{closure}}::h86ba874310c8f41e
+                        at libstd/rt.rs:59
+                         - std::panicking::try::do_call::h64129d2b0e54f3b8
+                        at libstd/panicking.rs:310
+   6:     0x55e06f97e859 - __rust_maybe_catch_panic
+                        at libpanic_unwind/lib.rs:105
+   7:     0x55e06f96d1b5 - std::panicking::try::hceef11cfeb87cfe0
+                        at libstd/panicking.rs:289
+                         - std::panic::catch_unwind::h331e7e117781c30b
+                        at libstd/panic.rs:374
+                         - std::rt::lang_start_internal::h6264a91317866dd6
+                        at libstd/rt.rs:58
+   8:     0x55e06f9410a7 - std::rt::lang_start::h8ebe7f6846366cee
+                        at /checkout/src/libstd/rt.rs:74
+   9:     0x55e06f9413fc - main
+  10:     0x7f878196b82f - __libc_start_main
+  11:     0x55e06f940f58 - _start
+  12:                0x0 - <unknown>
