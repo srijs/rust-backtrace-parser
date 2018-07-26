@@ -1,3 +1,37 @@
+//! This crate implements a parser for backtraces.
+//!
+//! The aim is to parse backtraces in the standard format
+//! that any Rust program can generate, for instance when
+//! crashing due to a panic, by creating a `failure::Error`,
+//! or by using the [`backtrace`][1] crate directly.
+//!
+//! The parser follows a zero-copy approach, which means that
+//! the input string can be provided by reference, and will not
+//! be copied during parsing. This has the effect that parsing
+//! a captured backtrace tends to be very performant.
+//!
+//! [1]: https://crates.io/crates/backtrace
+//!
+//! ## Example
+//!
+//! ```rust
+//! use backtrace_parser::Backtrace;
+//!
+//! # let input = "stack backtrace: 0: 0x0 - <no info>";
+//! let backtrace = Backtrace::parse(input).unwrap();
+//!
+//! for frame in backtrace.frames() {
+//!     for symbol in frame.symbols() {
+//!         println!("symbol: {:?}", symbol);
+//!     }
+//! }
+//! ```
+//!
+
+#![deny(warnings)]
+#![deny(missing_docs)]
+#![deny(missing_debug_implementations)]
+
 extern crate pest;
 #[macro_use]
 extern crate pest_derive;
@@ -12,6 +46,7 @@ mod parser;
 use self::parser::{BacktraceParser, Rule};
 
 #[derive(Debug)]
+/// Represents a parser error.
 pub struct Error<'a> {
     inner: pest::Error<'a, Rule>,
 }
@@ -25,11 +60,14 @@ impl<'a> fmt::Display for Error<'a> {
 impl<'a> error::Error for Error<'a> {}
 
 #[derive(Debug)]
+/// Represents a parsed backtrace.
 pub struct Backtrace<'a> {
     pairs: pest::iterators::Pairs<'a, Rule>,
 }
 
 impl<'a> Backtrace<'a> {
+    /// Parse the provided input string and return either a parsed backtrace,
+    /// or a parse error.
     pub fn parse(input: &'a str) -> Result<Backtrace<'a>, Error<'a>> {
         let pairs =
             BacktraceParser::parse(Rule::backtrace, input).map_err(|err| Error { inner: err })?;
@@ -37,6 +75,7 @@ impl<'a> Backtrace<'a> {
         Ok(Backtrace { pairs })
     }
 
+    /// Create an iterator over the stack frames in this backtrace.
     pub fn frames(&self) -> Frames<'a> {
         Frames {
             inner: self.pairs.clone(),
@@ -45,6 +84,7 @@ impl<'a> Backtrace<'a> {
 }
 
 #[derive(Debug)]
+/// Iterator over the stack frames in a parsed backtrace.
 pub struct Frames<'a> {
     inner: pest::iterators::Pairs<'a, Rule>,
 }
@@ -70,11 +110,13 @@ impl<'a> Iterator for Frames<'a> {
 }
 
 #[derive(Debug)]
+/// Represents a parsed stack frame.
 pub struct Frame<'a> {
     pairs: pest::iterators::Pairs<'a, Rule>,
 }
 
 impl<'a> Frame<'a> {
+    /// Create an iterator over the symbols in this stack frame.
     pub fn symbols(&self) -> Symbols<'a> {
         Symbols {
             inner: self.pairs.clone(),
@@ -83,6 +125,7 @@ impl<'a> Frame<'a> {
 }
 
 #[derive(Debug)]
+/// Iterator over the symbols in a parsed stack frame.
 pub struct Symbols<'a> {
     inner: pest::iterators::Pairs<'a, Rule>,
 }
@@ -132,6 +175,7 @@ impl<'a> Iterator for Symbols<'a> {
 }
 
 #[derive(Debug)]
+/// Represents a parsed symbol.
 pub struct Symbol<'a> {
     name: Option<&'a str>,
     filename: Option<&'a Path>,
@@ -139,14 +183,17 @@ pub struct Symbol<'a> {
 }
 
 impl<'a> Symbol<'a> {
+    /// Return the name of the symbol, if resolved.
     pub fn name(&self) -> Option<&'a str> {
         self.name
     }
 
+    /// Return the path of the source file, if known.
     pub fn filename(&self) -> Option<&'a Path> {
         self.filename
     }
 
+    /// Return the line number in source file, if known.
     pub fn lineno(&self) -> Option<u32> {
         self.lineno
     }
