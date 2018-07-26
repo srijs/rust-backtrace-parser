@@ -9,9 +9,9 @@ fn unresolved_symbols() {
     let data = include_str!("fixtures/unresolved.txt");
     let parsed = Backtrace::parse(data).unwrap();
 
-    let mut frames = parsed.into_frames();
+    let mut frames = parsed.frames();
 
-    let symbols = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols.len(), 0);
 
     assert!(frames.next().is_none());
@@ -22,9 +22,9 @@ fn no_symbol_info() {
     let data = include_str!("fixtures/no-info.txt");
     let parsed = Backtrace::parse(data).unwrap();
 
-    let mut frames = parsed.into_frames();
+    let mut frames = parsed.frames();
 
-    let symbols = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols.len(), 0);
 
     assert!(frames.next().is_none());
@@ -35,9 +35,9 @@ fn full_backtrace() {
     let data = include_str!("fixtures/full.txt");
     let parsed = Backtrace::parse(data).unwrap();
 
-    let mut frames = parsed.into_frames();
+    let mut frames = parsed.frames();
 
-    let symbols0 = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols0 = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols0.len(), 2);
     assert_eq!(
         symbols0[0].name(),
@@ -52,40 +52,40 @@ fn full_backtrace() {
     assert_eq!(symbols0[1].filename(), Some(Path::new("/root/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.9/src/backtrace/mod.rs")));
     assert_eq!(symbols0[1].lineno(), Some(42));
 
-    let symbols1 = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols1 = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols1.len(), 1);
 
-    let symbols2 = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols2 = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols2.len(), 1);
 
-    let symbols3 = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols3 = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols3.len(), 1);
 
-    let symbols4 = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols4 = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols4.len(), 1);
 
-    let symbols5 = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols5 = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols5.len(), 2);
 
-    let symbols6 = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols6 = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols6.len(), 1);
 
-    let symbols7 = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols7 = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols7.len(), 3);
 
-    let symbols8 = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols8 = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols8.len(), 1);
 
-    let symbols9 = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols9 = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols9.len(), 1);
 
-    let symbols10 = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols10 = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols10.len(), 1);
 
-    let symbols11 = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols11 = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols11[0].name(), Some("_start"));
 
-    let symbols12 = frames.next().unwrap().into_symbols().collect::<Vec<_>>();
+    let symbols12 = frames.next().unwrap().symbols().collect::<Vec<_>>();
     assert_eq!(symbols12[0].name(), None);
 
     assert!(frames.next().is_none());

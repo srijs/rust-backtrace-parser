@@ -8,11 +8,8 @@ use std::path::Path;
 
 use pest::Parser;
 
-#[derive(Parser)]
-#[grammar = "grammar.pest"]
-struct BacktraceParser;
-
-const _GRAMMAR: &str = include_str!("grammar.pest");
+mod parser;
+use self::parser::{BacktraceParser, Rule};
 
 #[derive(Debug)]
 pub struct Error<'a> {
@@ -39,14 +36,15 @@ impl<'a> Backtrace<'a> {
 
         Ok(Backtrace { pairs })
     }
-}
 
-impl<'a> Backtrace<'a> {
-    pub fn into_frames(self) -> Frames<'a> {
-        Frames { inner: self.pairs }
+    pub fn frames(&self) -> Frames<'a> {
+        Frames {
+            inner: self.pairs.clone(),
+        }
     }
 }
 
+#[derive(Debug)]
 pub struct Frames<'a> {
     inner: pest::iterators::Pairs<'a, Rule>,
 }
@@ -77,11 +75,14 @@ pub struct Frame<'a> {
 }
 
 impl<'a> Frame<'a> {
-    pub fn into_symbols(self) -> Symbols<'a> {
-        Symbols { inner: self.pairs }
+    pub fn symbols(&self) -> Symbols<'a> {
+        Symbols {
+            inner: self.pairs.clone(),
+        }
     }
 }
 
+#[derive(Debug)]
 pub struct Symbols<'a> {
     inner: pest::iterators::Pairs<'a, Rule>,
 }
