@@ -1,0 +1,27 @@
+whitespace = _{ " " | "\n" }
+
+frame_index = @{ ("0" | '1'..'9' ~ '0'..'9'*) ~ ":" }
+
+frame_pointer = @{ "0x" ~ ('0'..'9' | 'a'..'f' | 'A'..'F')+ }
+
+symbol_name_unknown = @{ "<unknown>" }
+symbol_name_known = @{ (!"\n" ~ any)+ }
+symbol_name = _{ symbol_name_unknown | symbol_name_known }
+
+symbol_location_path = @{ (!":" ~ any)+ }
+symbol_location_lineno = @{ ("0" | '1'..'9' ~ '0'..'9'*) }
+symbol_location = ${ symbol_location_path ~ ":" ~ symbol_location_lineno }
+
+symbol_unresolved = { "<unresolved>" }
+symbol_no_info = { "<no info>" }
+symbol_empty = _{ symbol_unresolved | symbol_no_info }
+
+symbol_non_empty = { symbol_name ~ ("at" ~ symbol_location)? }
+
+symbols_non_empty = _{ symbol_non_empty ~ ("-" ~ symbol_non_empty)* }
+symbols = _{ "-" ~ (symbol_empty | symbols_non_empty) }
+
+frame = { frame_index ~ frame_pointer ~ symbols }
+frames = _{ frame+ }
+
+backtrace = _ { "stack backtrace:" ~ frames }

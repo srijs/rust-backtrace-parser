@@ -1,14 +1,11 @@
+extern crate pest;
 #[macro_use]
-extern crate combine;
+extern crate pest_derive;
 
 use std::path::Path;
 
-mod parse;
-pub use self::parse::ParseError;
-
-pub fn parse<'a>(input: &'a str) -> Result<ParsedBacktrace<'a>, ParseError<'a>> {
-    parse::parse(input)
-}
+mod parser;
+pub use self::parser::{parse, ParseError};
 
 #[derive(Debug)]
 pub struct ParsedBacktrace<'a> {
