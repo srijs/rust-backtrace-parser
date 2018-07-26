@@ -162,7 +162,7 @@ impl<'a> Iterator for Symbols<'a> {
                             symbol_location_lineno.as_rule() == Rule::symbol_location_lineno
                         );
                         parsed_symbol.lineno =
-                            Some(symbol_location_lineno.into_span().as_str().parse().unwrap());
+                            symbol_location_lineno.into_span().as_str().parse().ok();
                     }
                     Some(parsed_symbol)
                 }

@@ -31,6 +31,22 @@ fn no_symbol_info() {
 }
 
 #[test]
+fn line_number_overflow() {
+    let data = "stack backtrace: 0: 0x0 - main\nat src/main.rs:1208925819614629174706176";
+    let parsed = Backtrace::parse(data).unwrap();
+
+    let mut frames = parsed.frames();
+
+    let symbols = frames.next().unwrap().symbols().collect::<Vec<_>>();
+    assert_eq!(symbols.len(), 1);
+    assert_eq!(symbols[0].name(), Some("main"));
+    assert_eq!(symbols[0].filename(), Some(Path::new("src/main.rs")));
+    assert_eq!(symbols[0].lineno(), None);
+
+    assert!(frames.next().is_none());
+}
+
+#[test]
 fn full_backtrace() {
     let data = include_str!("fixtures/full.txt");
     let parsed = Backtrace::parse(data).unwrap();
