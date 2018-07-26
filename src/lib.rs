@@ -2,7 +2,7 @@ extern crate pest;
 #[macro_use]
 extern crate pest_derive;
 
-use std::error::Error;
+use std::error;
 use std::fmt;
 use std::path::Path;
 
@@ -15,17 +15,17 @@ struct BacktraceParser;
 const _GRAMMAR: &str = include_str!("grammar.pest");
 
 #[derive(Debug)]
-pub struct ParseError<'a> {
+pub struct Error<'a> {
     inner: pest::Error<'a, Rule>,
 }
 
-impl<'a> fmt::Display for ParseError<'a> {
+impl<'a> fmt::Display for Error<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(&self.inner, f)
     }
 }
 
-impl<'a> Error for ParseError<'a> {}
+impl<'a> error::Error for Error<'a> {}
 
 #[derive(Debug)]
 pub struct Backtrace<'a> {
@@ -33,9 +33,9 @@ pub struct Backtrace<'a> {
 }
 
 impl<'a> Backtrace<'a> {
-    pub fn parse(input: &'a str) -> Result<Backtrace<'a>, ParseError<'a>> {
-        let pairs = BacktraceParser::parse(Rule::backtrace, input)
-            .map_err(|err| ParseError { inner: err })?;
+    pub fn parse(input: &'a str) -> Result<Backtrace<'a>, Error<'a>> {
+        let pairs =
+            BacktraceParser::parse(Rule::backtrace, input).map_err(|err| Error { inner: err })?;
 
         Ok(Backtrace { pairs })
     }
