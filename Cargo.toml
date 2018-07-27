@@ -2,6 +2,11 @@
 name = "backtrace-parser"
 version = "0.1.0"
 authors = ["Sam Rijs <srijs@airpost.net>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/srijs/rust-backtrace-parser"
+documentation = "https://docs.rs/backtrace-parser"
+description = "A zero-copy parser for Rust backtraces."
 
 [dependencies]
 pest = "1.0.6"
